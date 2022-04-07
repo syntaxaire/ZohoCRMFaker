@@ -1,0 +1,1 @@
+ZohoCRMFaker is a demonstration that uploads randomly generated data into a Zoho CRM instance.
