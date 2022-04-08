@@ -12,3 +12,6 @@ class FakeCustomer:
         self.name: str = fake.name()
         self.address: str = fake.address()
         self.phone: str = fake.phone_number()
+
+    def __str__(self):
+        return '\n'.join((self.name, self.address, self.phone))
