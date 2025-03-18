@@ -24,9 +24,7 @@ async def ensure_access_token():
     global access_token
 
     # make a request to check
-    if not access_token:
-        pass
-    else:
+    if access_token:
         # check existing
         result = httpx.get(
             "https://www.zohoapis.com/billing/v1/subscriptions",
@@ -36,6 +34,8 @@ async def ensure_access_token():
             # it's good
             logger.info("Access token is valid")
             return
+    else:
+        logger.debug("Access token is missing")
 
     # it's missing, bad or expired; refresh it
     params = {
