@@ -1,4 +1,5 @@
 """Entry point to ZohoCRMFaker"""
+
 import asyncio
 import os
 from pprint import pprint
@@ -13,18 +14,24 @@ load_dotenv(ENV_FILE, verbose=True)
 fake = Faker()
 
 
-access_token = os.getenv("ZOHO_ACCESS_TOKEN"),  # will be written back to .env, thus the state
+access_token = (
+    os.getenv("ZOHO_ACCESS_TOKEN"),
+)  # will be written back to .env, thus the state
+
 
 async def ensure_access_token():
     """Ensure that the access token is valid."""
     global access_token
-    
+
     # make a request to check
     if not access_token:
         pass
     else:
-        # check existing    
-        result = httpx.get("https://www.zohoapis.com/billing/v1/subscriptions", headers={"Authorization": f"Zoho-oauthtoken {access_token}"})
+        # check existing
+        result = httpx.get(
+            "https://www.zohoapis.com/billing/v1/subscriptions",
+            headers={"Authorization": f"Zoho-oauthtoken {access_token}"},
+        )
         if result.status_code == 200:
             # it's good
             logger.info("Access token is valid")
@@ -51,17 +58,27 @@ async def ensure_access_token():
 async def make_fake_billing_sub():
     """Make fake Billing subscription for tests."""
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
+    name = fake.name()
+    first_name = name.split()[0]
+    last_name = name.split()[1]
+    email = first_name.lower() + last_name.lower() + "@example.com"
+
     data = {
         "customer": {
             "display_name": fake.company(),
-            "first_name": fake.name().split()[0],
-            "last_name": fake.name().split()[1],
-            "email": fake.email(),
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
             "billing_address": {"state": fake.state(), "country": fake.country()},
         },
         "plan": {"plan_code": "FREE"},
     }
-    response = httpx.post(url="https://www.zohoapis.com/billing/v1/subscriptions", headers=headers, json=data)
+    response = httpx.post(
+        url="https://www.zohoapis.com/billing/v1/subscriptions",
+        headers=headers,
+        json=data,
+        timeout=30.0,
+    )
     reply = response.json()
     pprint(reply["subscription"]["contactpersons"])
 
