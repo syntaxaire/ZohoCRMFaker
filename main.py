@@ -80,7 +80,9 @@ async def make_fake_billing_sub():
         timeout=30.0,
     )
     reply = response.json()
-    pprint(reply["subscription"]["contactpersons"])
+    match reply:
+        case {"code": 0, "subscription": subscription}:
+            logger.success(f"{subscription['subscription_number']} created for {name} ({email}) at {subscription['customer']['display_name']}")
 
 
 async def main():
