@@ -10,3 +10,5 @@ ZOHO_REFRESH_TOKEN=
 ```
 
 `ZOHO_ACCESS_TOKEN` will be added to `.env` automatically.
+
+Simply click the run button in VSCode or press F5. The test subscription will be created in Billing.
